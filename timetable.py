@@ -20,7 +20,7 @@ class Timetable:
     Instance Attributes:
         - table: a dictionary mapping days of the week to the locations of lectures at appropriate times.
     """
-    table: dict[str, list[str]]
+    table: set[Session]
 
     def __init__(self) -> None:
         """
@@ -28,22 +28,7 @@ class Timetable:
 
         Note: Timetable starts at 8:00 AM and goes to 10:00 PM
         """
-        self.table = dict()
-        self.table["Mon"] = [''] * 18
-        self.table["Tue"] = [''] * 18
-        self.table["Wed"] = [''] * 18
-        self.table["Thu"] = [''] * 18
-        self.table["Fri"] = [''] * 18
-
-    def get_time_slot(self, start_time: Time, end_time: Time) -> tuple[int, int]:
-        """
-        Given a start and end time, return the corresponding start and end index position
-
-        Examples:
-            - 8:00 to 9:00 should return (0, 1)
-            - 12:00 to 15:00 should return (4, 7)
-            - 1:00 to 8:00 should raise a value error, since that is outside the range of our timetable.
-        """
+        self.sessions = set()
 
     def add_session(self, session: Session) -> None:
         """
@@ -54,8 +39,17 @@ class Timetable:
         - since the actual position of the item in the list will keep track of the time, as the actual string, put the
         building location.
         """
+        self.sessions.add(session)
 
     def add_lecture(self, lecture: Lecture) -> None:
         """
         Given a lecture, place the lecture's sessions into the table.
         """
+        for i in range(len(lecture.sessions)):
+            self.sessions.add(lecture.sessions[i])
+
+    def output_timetable(self) -> None:
+        """
+        Use Plotly or Pygame to output all sessions on the timetable into a chart
+        """
+        # HANNAH TODO

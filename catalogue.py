@@ -40,3 +40,4 @@ class Catalogue:
         """
         Given a course code, return a list of all possible lecture sections for that course.
         """
+        # TODO Riyad please implement this.

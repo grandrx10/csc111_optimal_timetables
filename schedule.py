@@ -61,6 +61,12 @@ class Schedule:
         - Check distance between locations if they are back to back
         """
 
+    def find_travel_time(self, location1: str, location2: str) -> float | int:
+        """
+        Find the amount of time it takes to travel from one location to another using Google Maps API.
+        """
+        # TODO Hussain implement this
+
     def get_best_path(self, course_count: int) -> list[str]:
         """
         Given the correct number of courses to look for, find the path in the tree such that it returns the best
