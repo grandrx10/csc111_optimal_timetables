@@ -38,7 +38,18 @@ class Session:
         self.day = day
         self.location = location
 
-    def conflicting(self, other: Session) -> bool:
+    def conflict(self, other: Session) -> bool:
         """
         Return if this session conflicts with another session.
+        >>> s1 = Session((Time(1, 40), Time(4, 20)), "MON", "Mining Building")
+        >>> s2 = Session((Time(3, 0), Time(6, 0)), "MON", "Mining Building")
+        >>> s1.conflict(s2)
+        True
+        >>> s3 = Session((Time(4, 30), Time(6, 0)), "MON", "Mining Building")
+        >>> s1.conflict(s3)
+        False
         """
+        if self.day == other.day and self.start_time <= other.end_time and self.end_time >= other.start_time \
+                and self.location == other.location:
+            return True
+        return False

@@ -42,3 +42,9 @@ class Lecture:
         """
         Return if this lecture section conflicts with another lecture section.
         """
+        for i in range(len(self.sessions)):
+            for c in range(len(other.sessions)):
+                if self.sessions[i].conflict(other.sessions[c]):
+                    return True
+
+        return False

@@ -20,3 +20,24 @@ class Time:
     def __init__(self, hours: int, minutes: int):
         self.hours = hours
         self.minutes = minutes
+
+    def __gt__(self, other) -> bool:
+        if self.hours > other.hours:
+            return True
+        elif self.hours == other.hours and self.minutes > other.minutes:
+            return True
+        else:
+            return False
+
+    def __lt__(self, other) -> bool:
+        if self.hours < other.hours:
+            return True
+        elif self.hours == other.hours and self.minutes < other.minutes:
+            return True
+        else:
+            return False
+
+    def __eq__(self, other) -> bool:
+        if self.hours == other.hours and self.minutes == other.minutes:
+            return True
+        return False
