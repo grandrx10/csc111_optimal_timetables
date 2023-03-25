@@ -42,21 +42,28 @@ class Schedule:
         - Recurse into subtrees and add_course with copied list
         - Once there are no subtrees (you are at a leaf) then, add new schedules with their roots being the lectures.
         """
-        # TODO COMPLETE BASE CASE
+        # TODO Check if the if statement before the recursive call actually works
         # Base Case (We are at a leaf)
         if len(self.subtrees) == 0:
             # Add new schedules with their roots being the lectures
-            ...
-            # for lecture in lectures:
-            #   self.subtrees[...] = Schedule(lecture)
+            for lecture in lectures:
+              self.subtrees[lecture.lect_code] = Schedule(lecture)
+
         else:
-            lectures_copy = []
             # Otherwise, recurse into the subtrees
             for subtree in self.subtrees:
+
+                lectures_copy = []
+                # For each lecture, check if it has a conflict with the subtree's root lecture
                 for lecture in lectures:
-                    # For each lecture, check if it has a conflict with the subtree's root lecture. If not, add it to a new list
+                    #  If it does not have a conflict, add it to a new list
                     if not lecture.conflict(self.subtrees[subtree].root_lecture):
                         lectures_copy.append(lecture)
+
+                # If there are no remaining lectures without conflicts, do not recurse further
+                if len(lectures_copy) == 0:
+                    break
+                # Recursively call add_course in the subtree, with the new list of lectures
                 subtrees[subtree].add_course(lectures_copy)
 
 
