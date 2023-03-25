@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Optional, Any
 from lecture import Lecture
 from timetable import Timetable
+from google_maps_location import get_travel_time
 
 DEFAULT_LECTURE = Lecture('', [])
 
@@ -32,15 +33,32 @@ class Schedule:
 
     def add_course(self, lectures: list[Lecture]) -> None:
         """
-        Add a lecture to the schedule class.
+        Add a course(with all its lecture sections) to the schedule class.
 
         Implementation Notes:
-        - If root_lecture is None, return
+        # - If root_lecture is None, return. Don't think we need this since root_lecture is never None
         - Make a copy of list lectures
         - If root_lecture conflicts with a lecture in lectures, remove that lecture from the copied list
         - Recurse into subtrees and add_course with copied list
         - Once there are no subtrees (you are at a leaf) then, add new schedules with their roots being the lectures.
         """
+        # TODO COMPLETE BASE CASE
+        # Base Case (We are at a leaf)
+        if len(self.subtrees) == 0:
+            # Add new schedules with their roots being the lectures
+            ...
+            # for lecture in lectures:
+            #   self.subtrees[...] = Schedule(lecture)
+        else:
+            lectures_copy = []
+            # Otherwise, recurse into the subtrees
+            for subtree in self.subtrees:
+                for lecture in lectures:
+                    # For each lecture, check if it has a conflict with the subtree's root lecture. If not, add it to a new list
+                    if not lecture.conflict(self.subtrees[subtree].root_lecture):
+                        lectures_copy.append(lecture)
+                subtrees[subtree].add_course(lectures_copy)
+
 
     def get_valid_paths(self, courses_count: int) -> list[list[str]]:
         """
@@ -61,11 +79,11 @@ class Schedule:
         - Check distance between locations if they are back to back
         """
 
-    def find_travel_time(self, location1: str, location2: str) -> float | int:
+    def find_travel_time(self, location1: str, location2: str) -> int:
         """
-        Find the amount of time it takes to travel from one location to another using Google Maps API.
+        Return the amount of time (in minutes) it takes to travel from one location to another on foot using Google Maps API.
         """
-        # TODO Hussain implement this
+        return get_travel_time(location1, location2)
 
     def get_best_path(self, course_count: int) -> list[str]:
         """
