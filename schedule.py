@@ -36,35 +36,33 @@ class Schedule:
         Add a course(with all its lecture sections) to the schedule class.
 
         Implementation Notes:
-        # - If root_lecture is None, return. Don't think we need this since root_lecture is never None
         - Make a copy of list lectures
         - If root_lecture conflicts with a lecture in lectures, remove that lecture from the copied list
         - Recurse into subtrees and add_course with copied list
         - Once there are no subtrees (you are at a leaf) then, add new schedules with their roots being the lectures.
         """
-        # TODO Check if the if statement before the recursive call actually works
+        # TODO Testing / Update lecture.conflict to deal with the case when root_lecture == DEFAULT_LECTURE(1st course)
+
+        # Create a copy of 'lectures', with only lectures that do not have conflicts with current lecture
+        lectures_copy = []
+        for lecture in lectures:
+            #  For each lecture,if it does not have a conflict, add it to the new list
+            if not lecture.conflict(self.root_lecture):
+                lectures_copy.append(lecture)
+
         # Base Case (We are at a leaf)
         if len(self.subtrees) == 0:
             # Add new schedules with their roots being the lectures
-            for lecture in lectures:
+            for lecture in lectures_copy:
               self.subtrees[lecture.lect_code] = Schedule(lecture)
 
         else:
+
             # Otherwise, recurse into the subtrees
             for subtree in self.subtrees:
-
-                lectures_copy = []
-                # For each lecture, check if it has a conflict with the subtree's root lecture
-                for lecture in lectures:
-                    #  If it does not have a conflict, add it to a new list
-                    if not lecture.conflict(self.subtrees[subtree].root_lecture):
-                        lectures_copy.append(lecture)
-
-                # If there are no remaining lectures without conflicts, do not recurse further
-                if len(lectures_copy) == 0:
-                    break
-                # Recursively call add_course in the subtree, with the new list of lectures
-                subtrees[subtree].add_course(lectures_copy)
+                if len(lectures_copy) != 0:
+                # Recursively call add_course into the subtrees, with the new list of lectures, if the list is non-empty
+                    subtrees[subtree].add_course(lectures_copy)
 
 
     def get_valid_paths(self, courses_count: int) -> list[list[str]]:
@@ -86,11 +84,6 @@ class Schedule:
         - Check distance between locations if they are back to back
         """
 
-    def find_travel_time(self, location1: str, location2: str) -> int:
-        """
-        Return the amount of time (in minutes) it takes to travel from one location to another on foot using Google Maps API.
-        """
-        return get_travel_time(location1, location2)
 
     def get_best_path(self, course_count: int) -> list[str]:
         """
