@@ -26,7 +26,7 @@ class Catalogue:
         - all(wanted_course in data for wanted_course in wanted_courses)
 
     """
-    data: dict[str, Any]
+    data: dict[str, Lecture]
     wanted_courses: set[str]
 
     def __init__(self, wanted_courses: set[str], term: str) -> None:
