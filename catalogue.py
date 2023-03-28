@@ -49,3 +49,9 @@ class Catalogue:
         Given a course code, return a list of all possible lecture sections for that course.
         """
         # TODO Riyad please implement this.
+
+    def uoft_building_to_address(self, building_code: str) -> str:
+        """
+        Given a uoft building code, return an address that is usable by google maps.
+        """
+        # TODO HANNAH IMPLEMENT THIS
