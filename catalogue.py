@@ -28,6 +28,7 @@ class Catalogue:
     """
     data: dict[str, Lecture]
     wanted_courses: set[str]
+    building_codes: dict[str, str]
 
     def __init__(self, wanted_courses: set[str], term: str) -> None:
         """
@@ -55,3 +56,10 @@ class Catalogue:
         Given a uoft building code, return an address that is usable by google maps.
         """
         # TODO HANNAH IMPLEMENT THIS
+
+    def read_csv_building_code(self, csv_file: str) -> None:
+        """
+        Read a csv file and update self.building_code.
+        Match the building codes of uoft buildings to their actual addresses for google maps to use.
+        """
+        # TODO Hannah implement this
