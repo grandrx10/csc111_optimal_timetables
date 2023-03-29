@@ -46,6 +46,8 @@ class Catalogue:
             - make sure that data takes string keys (the course code) and returns a list of possible lectures
         """
         self.wanted_courses = wanted_courses
+        self.building_codes = {}
+        self.read_csv_building_code('building_names_and_addresses.csv')
 
     def get_possible_lect_sessions(self, course: str, term: str) -> list[Lecture]:
         """
@@ -57,7 +59,7 @@ class Catalogue:
         """
         Given a uoft building code, return an address that is usable by google maps.
         """
-        # TODO HANNAH IMPLEMENT THIS
+        return self.building_codes[building_code]
 
     def read_csv_building_code(self, csv_file: str) -> None:
         """
