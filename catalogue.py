@@ -86,24 +86,15 @@ class Catalogue:
 
                                     session = Session((start_time, end_time), day, location)
 
-                                    sessions += [session]
-                                else:
-                                    pass
+                                    sessions += [session]                              
 
                             if sessions:
                                 lect_code = f'{course_name[:6]} {lecture_name}'
                                 lecture = Lecture(lect_code, sessions)
                                 lectures += [lecture]
-                            else:
-                                pass
-
-                        else:
-                            pass
 
                     if lectures:
                         self.data[course_name[:6]] = Course(lectures)
-                    else:
-                        pass
 
         else:  # term == 'S'
             for course_name in raw_data:
@@ -136,23 +127,14 @@ class Catalogue:
                                     session = Session((start_time, end_time), day, location)
 
                                     sessions += [session]
-                                else:
-                                    pass
 
                             if sessions:
                                 lect_code = f'{course_name[:6]} {lecture_name}'
                                 lecture = Lecture(lect_code, sessions)
                                 lectures += [lecture]
-                            else:
-                                pass
-
-                        else:
-                            pass
 
                     if lectures:
                         self.data[course_name[:6]] = Course(lectures)
-                    else:
-                        pass
 
         for course_name in self.wanted_courses:
             if course_name not in self.data:
