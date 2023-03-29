@@ -21,6 +21,7 @@ class Catalogue:
         - data: the dictionary that maps cs courses to their corresponding information. (Example: "CSC110" is a key for
         the dictionary, and it will return a Course class.
         - wanted_courses: a set that contains all of the courses that the user wants to take.
+        - building_codes: a dictionary going from building codes to actual addresses of uoft buildings
 
     Representation Invariants:
         - all(wanted_course in data for wanted_course in wanted_courses)
