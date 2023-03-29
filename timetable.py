@@ -53,3 +53,30 @@ class Timetable:
         Use Plotly or Pygame to output all sessions on the timetable into a chart
         """
         # HANNAH TODO
+
+    def get_timetable_score(self) -> int | float:
+        """
+        Calculate the timetable score from the given sessions.
+        """
+        score = 100
+
+        sessions_copy = self.sessions.copy()
+        for session in self.sessions:
+            for other_session in sessions_copy:
+                if session.adjacent(other_session) and session != other_session:
+                    travel_time = get_travel_time(session.location, other_session.location)
+                    if travel_time > 10:
+                        score -= travel_time
+
+            # To prevent 2 way score checking (we don't want to check distances between the same locations twice,
+            # that would be a waste of both computing power and time from Google api)
+            sessions_copy.remove(session)
+
+        return score
+
+
+def get_travel_time(l1: str, l2: str) -> int | float:
+    """
+    return travel time
+    """
+    # TODO
