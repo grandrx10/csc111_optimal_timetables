@@ -12,6 +12,7 @@ from lecture import Lecture
 from catalogue import Catalogue
 from schedule import Schedule
 from timetable import Timetable
+from google_maps_location import get_travel_time
 
 DEFAULT_LECTURE = Lecture('', [])
 
