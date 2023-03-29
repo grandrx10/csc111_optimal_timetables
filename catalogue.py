@@ -11,6 +11,7 @@ from typing import Optional, Any
 from lecture import Lecture
 from time_h import Time
 from session import Session
+import csv 
 
 
 class Catalogue:
@@ -63,4 +64,9 @@ class Catalogue:
         Read a csv file and update self.building_code.
         Match the building codes of uoft buildings to their actual addresses for google maps to use.
         """
-        # TODO Hannah implement this
+        with open(csv_file) as csv_file:
+            reader = csv.reader(csv_file)
+
+            for row in reader:
+                for i in range(0, 1):
+                    self.building_codes[str(row[i+1])] = str(row[i])
