@@ -53,3 +53,17 @@ class Session:
                 and self.location == other.location:
             return True
         return False
+
+    def adjacent(self, other: Session) -> bool:
+        """
+        Return if this session is directly adjacent to the other session (when this session ends, the other starts, or
+        when this session starts is the end of the other session)
+        >>> s1 = Session((Time(1, 40), Time(4, 20)), "MON", "Mining Building")
+        >>> s2 = Session((Time(4, 20), Time(5, 20)), "MON", "Mining Building")
+        >>> s1.adjacent(s2)
+        True
+        >>> s2.adjacent(s1)
+        True
+        """
+        if self.day == other.day and (self.end_time == other.start_time or self.start_time == other.end_time):
+            return True

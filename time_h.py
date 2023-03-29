@@ -29,6 +29,16 @@ class Time:
         else:
             return False
 
+    def __ge__(self, other):
+        if self.__gt__(other) or self.__eq__(other):
+            return True
+        return False
+
+    def __le__(self, other):
+        if self.__lt__(other) or self.__eq__(other):
+            return True
+        return False
+
     def __lt__(self, other) -> bool:
         if self.hours < other.hours:
             return True
