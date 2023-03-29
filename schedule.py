@@ -104,22 +104,24 @@ class Schedule:
 
             return paths
 
-    def calculate_score(self, timetable: Timetable, path: list[str]) -> float:
+    def get_best_timetable(self, course_count: int) -> Timetable:
         """
-        With a given path, find the score that the path returns.
+        Given the number of courses, construct and return the best possible timetable in that tree.
+        """
+        valid_paths = self.get_valid_paths(course_count)
 
-        Implementation Notes:
-        - As you recurse, use the timetable to keep track of previous locations and times
-        - Check distance between locations if they are back to back
-        """
-        # TODO IMPLEMENT
+        best_timetable = None
+        best_score = None
 
-    def get_best_path(self, course_count: int) -> list[str]:
-        """
-        Given the correct number of courses to look for, find the path in the tree such that it returns the best
-        possible timetable.
-        """
-        # TODO IMPLEMENT
+        for path in valid_paths:
+            timetable = self.get_timetable(path)
+            score = timetable.get_score()
+
+            if best_score is None or score > best_score:
+                best_timetable = timetable
+                best_score = score
+
+        return best_timetable
 
     def get_timetable(self, path: list[str]) -> Timetable:
         """
@@ -130,7 +132,7 @@ class Schedule:
         path_copy = path.copy()
         path_copy.reverse()
         sessions = self._get_list_sessions_in_path(path_copy)
-        return Timetable(sessions)
+        return Timetable(sessions, path)
 
     def _get_list_sessions_in_path(self, path: list[str]) -> list[Session]:
         """

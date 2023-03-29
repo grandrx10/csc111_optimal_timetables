@@ -11,6 +11,7 @@ from typing import Optional, Any
 from lecture import Lecture
 from session import Session
 from time_h import Time
+from google_maps_location import get_travel_time
 
 
 class Timetable:
@@ -19,16 +20,21 @@ class Timetable:
 
     Instance Attributes:
         - table: a dictionary mapping days of the week to the locations of lectures at appropriate times.
+        - lecture_codes: a list of all lectures to register for
     """
     table: set[Session]
+    lecture_codes: list[str]
 
-    def __init__(self) -> None:
+    def __init__(self, sessions: list[Session], lecture_codes: list[str]) -> None:
         """
         Create an empty timetable. Each element of the list represents one hour.
 
         Note: Timetable starts at 8:00 AM and goes to 10:00 PM
         """
+        self.lecture_codes = lecture_codes
         self.sessions = set()
+        for session in sessions:
+            self.sessions.add(session)
 
     def add_session(self, session: Session) -> None:
         """
@@ -54,7 +60,7 @@ class Timetable:
         """
         # HANNAH TODO
 
-    def get_timetable_score(self) -> int | float:
+    def get_score(self) -> int | float:
         """
         Calculate the timetable score from the given sessions.
         """
@@ -73,10 +79,3 @@ class Timetable:
             sessions_copy.remove(session)
 
         return score
-
-
-def get_travel_time(l1: str, l2: str) -> int | float:
-    """
-    return travel time
-    """
-    # TODO

@@ -13,17 +13,17 @@ from course import Course
 from lecture import Lecture
 from session import Session
 from time_h import Time
-import csv 
+import csv
 
 
 class Catalogue:
     """
-    A class that holds all of the data from CSC, STA, MAT courses of UofTSG in dictionaries.
+    A class that holds all the data from CSC, STA, MAT courses of UofTSG in dictionaries.
 
     Instance Attributes:
         - data: the dictionary that maps cs courses to their corresponding information. (Example: "CSC111" is a key for
         the dictionary, and it will return a Course class.)
-        - wanted_courses: a set that contains all of the courses that the user wants to take.
+        - wanted_courses: a set that contains all the courses that the user wants to take.
         - building_codes: a dictionary going from building codes to actual addresses of uoft buildings
 
     Representation Invariants:
@@ -39,11 +39,12 @@ class Catalogue:
         """
         Given a set of courses that the user wants to take, find the data related to those courses (using JSON files)
         and put that information into self.data.
-        
+
         Possible terms are:
         - S (winter)
-        - F (fall) # This category includes Y (year-long) courses as well, since you can enrol in Y courses only during the Fall term.
-        
+        - F (fall) # This category includes Y (year-long) courses as well,
+        since you can enrol in Y courses only during the Fall term.
+
         Preconditions:
         - term in {F, S} (Year-long courses are included in the 'F' category)
         - Courses in wanted_courses can be written in any of the following formats: 'CSC111', 'csc111', 'Csc111', etc.
@@ -52,89 +53,51 @@ class Catalogue:
         self.data = {}
         self.building_codes = {}
         self.read_csv_building_code('building_names_and_addresses.csv')
-        
+
         with open('all_data.json') as file:
             raw_data = json.load(file)
 
-        if term == 'F':
-            for course_name in raw_data:
-                if course_name[:6] in self.wanted_courses and (course_name[9] == 'F' or course_name[9] == 'Y'):
-                    course_info = raw_data[course_name]['meetings']
-                    lectures = []
-                    for lecture_name in course_info:
-                        if lecture_name[:3] == 'LEC':
-                            sessions_info = course_info[lecture_name]['schedule']
-                            sessions = []
-                            for session in sessions_info:
-                                if sessions_info[session]["meetingStartTime"] is not None:
-                                    start_time_hour = int(sessions_info[session]["meetingStartTime"][:2])
-                                    start_time_min = int(sessions_info[session]["meetingStartTime"][3:])
-                                    start_time = Time(start_time_hour, start_time_min)
+        for course_name in raw_data:
+            if course_name[:6] in self.wanted_courses and (course_name[9] == term or
+                                                           (term == "F" and course_name[9] == 'Y')):
+                course_info = raw_data[course_name]['meetings']
+                lectures = []
+                for lecture_name in course_info:
+                    if lecture_name[:3] == 'LEC':
+                        sessions_info = course_info[lecture_name]['schedule']
+                        sessions = []
+                        for session in sessions_info:
+                            if sessions_info[session]["meetingStartTime"] is not None:
+                                start_time_hour = int(sessions_info[session]["meetingStartTime"][:2])
+                                start_time_min = int(sessions_info[session]["meetingStartTime"][3:])
+                                start_time = Time(start_time_hour, start_time_min)
 
-                                    end_time_hour = int(sessions_info[session]["meetingEndTime"][:2])
-                                    end_time_min = int(sessions_info[session]["meetingEndTime"][3:])
-                                    end_time = Time(end_time_hour, end_time_min)
+                                end_time_hour = int(sessions_info[session]["meetingEndTime"][:2])
+                                end_time_min = int(sessions_info[session]["meetingEndTime"][3:])
+                                end_time = Time(end_time_hour, end_time_min)
 
-                                    day = sessions_info[session]["meetingDay"]
+                                day = sessions_info[session]["meetingDay"]
 
-                                    if location_is_valid(sessions_info[session]["assignedRoom1"]):
-                                        location = sessions_info[session]["assignedRoom1"][:2]
-                                    elif location_is_valid(sessions_info[session]["assignedRoom2"]):
-                                        location = sessions_info[session]["assignedRoom2"][:2]
-                                    else:
-                                        location = "NA"
+                                if location_is_valid(sessions_info[session]["assignedRoom1"]):
+                                    location = self.uoft_building_to_address(
+                                        sessions_info[session]["assignedRoom1"][:2])
+                                elif location_is_valid(sessions_info[session]["assignedRoom2"]):
+                                    location = self.uoft_building_to_address(
+                                        sessions_info[session]["assignedRoom2"][:2])
+                                else:
+                                    location = "NA"
 
-                                    session = Session((start_time, end_time), day, location)
+                                session = Session((start_time, end_time), day, location)
 
-                                    sessions += [session]                              
+                                sessions += [session]
 
-                            if sessions:
-                                lect_code = f'{course_name[:6]} {lecture_name}'
-                                lecture = Lecture(lect_code, sessions)
-                                lectures += [lecture]
+                        if sessions:
+                            lect_code = f'{course_name[:6]} {lecture_name}'
+                            lecture = Lecture(lect_code, sessions)
+                            lectures += [lecture]
 
-                    if lectures:
-                        self.data[course_name[:6]] = Course(lectures)
-
-        else:  # term == 'S'
-            for course_name in raw_data:
-                if course_name[:6] in self.wanted_courses and course_name[9] == 'S':
-                    course_info = raw_data[course_name]['meetings']
-                    lectures = []
-                    for lecture_name in course_info:
-                        if lecture_name[:3] == 'LEC':
-                            sessions_info = course_info[lecture_name]['schedule']
-                            sessions = []
-                            for session in sessions_info:
-                                if sessions_info[session]["meetingStartTime"] is not None:
-                                    start_time_hour = int(sessions_info[session]["meetingStartTime"][:2])
-                                    start_time_min = int(sessions_info[session]["meetingStartTime"][3:])
-                                    start_time = Time(start_time_hour, start_time_min)
-
-                                    end_time_hour = int(sessions_info[session]["meetingEndTime"][:2])
-                                    end_time_min = int(sessions_info[session]["meetingEndTime"][3:])
-                                    end_time = Time(end_time_hour, end_time_min)
-
-                                    day = sessions_info[session]["meetingDay"]
-
-                                    if location_is_valid(sessions_info[session]["assignedRoom1"]):
-                                        location = sessions_info[session]["assignedRoom1"][:2]
-                                    elif location_is_valid(sessions_info[session]["assignedRoom2"]):
-                                        location = sessions_info[session]["assignedRoom2"][:2]
-                                    else:
-                                        location = "NA"
-
-                                    session = Session((start_time, end_time), day, location)
-
-                                    sessions += [session]
-
-                            if sessions:
-                                lect_code = f'{course_name[:6]} {lecture_name}'
-                                lecture = Lecture(lect_code, sessions)
-                                lectures += [lecture]
-
-                    if lectures:
-                        self.data[course_name[:6]] = Course(lectures)
+                if lectures:
+                    self.data[course_name[:6]] = Course(lectures)
 
         for course_name in self.wanted_courses:
             if course_name not in self.data:
@@ -168,9 +131,6 @@ class Catalogue:
             for row in reader:
                 for i in range(0, 1):
                     self.building_codes[str(row[i+1])] = str(row[i])
-        
-        
-# helper function for Catalogue.__init__()
 
 
 def location_is_valid(location: str) -> bool:
@@ -179,5 +139,3 @@ def location_is_valid(location: str) -> bool:
         if location[-1] in set(range(0, 10)):
             return True
     return False
-
-
