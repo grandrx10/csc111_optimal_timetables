@@ -41,9 +41,8 @@ class Catalogue:
         and put that information into self.data.
         
         Possible terms are:
-        - Y (year)
         - S (winter)
-        - F (fall)
+        - F (fall) # This category includes Y (year-long) courses as well, since you can enrol in Y courses only during the Fall term.
         
         Preconditions:
         - term in {F, S} (Year-long courses are included in the 'F' category)
