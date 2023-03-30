@@ -12,6 +12,9 @@ from lecture import Lecture
 from session import Session
 from time_h import Time
 from google_maps_location import get_travel_time
+import pygame
+from pygame.locals import *
+from schedule_rect import ScheduleRect
 
 
 class Timetable:
@@ -56,12 +59,6 @@ class Timetable:
             lect_codes.append(lect_code)
         return lect_codes
 
-    def output_timetable(self) -> None:
-        """
-        Use Plotly or Pygame to output all sessions on the timetable into a chart
-        """
-        # HANNAH TODO
-
     def get_score(self, exclusion_days: set[str]) -> int | float:
         """
         Calculate the timetable score from the given sessions.
@@ -86,3 +83,14 @@ class Timetable:
             sessions_copy.remove(session)
 
         return score
+
+    def output_timetable(self) -> None:
+        """
+        Use Plotly or Pygame to output all sessions on the timetable into a chart
+        """
+        # TODO implement Create several Schedule Rects and display them
+
+    def get_xy_coord(self, session: Session) -> tuple[int, int]:
+        """
+        Given a session, return its x and y coordinates on the schedule
+        """
