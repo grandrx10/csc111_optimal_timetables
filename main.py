@@ -34,6 +34,15 @@ while user_input.lower() != "end":
     if user_input != "end":
         courses.add(user_input)
 
+print("Please enter which days you don't want to take classes below. Days are MO, TU, WE, TH, FR.")
+print("Type 'end' when you are finished.")
+exclusion_days = set()
+user_input = ""
+while user_input.lower() != "end":
+    user_input = input("Enter day that you want to exclude: ")
+    if user_input != "end" and user_input in {"MO", "TU", "WE", "TH", "FR"}:
+        exclusion_days.add(user_input.upper())
+
 # Initialize the catalogue and schedule tree
 print("Creating timetable...")
 catalogue = Catalogue(courses, term)
@@ -46,7 +55,7 @@ for course in courses:
 
 # Display the best timetable
 print("Finding best timetable...")
-best_timetable = schedule.get_best_timetable(len(courses))
+best_timetable = schedule.get_best_timetable(len(courses), exclusion_days)
 print(best_timetable.get_lecture_codes())  # This is temporary until we get output working
 # print("Displaying timetable...")
 # best_timetable.output_timetable()

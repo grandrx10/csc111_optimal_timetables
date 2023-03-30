@@ -62,7 +62,7 @@ class Timetable:
         """
         # HANNAH TODO
 
-    def get_score(self) -> int | float:
+    def get_score(self, exclusion_days: set[str]) -> int | float:
         """
         Calculate the timetable score from the given sessions.
         """
@@ -77,6 +77,9 @@ class Timetable:
                     travel_time = get_travel_time(session.location, other_session.location)
                     if travel_time > 10:
                         score -= travel_time
+
+            if session.day in exclusion_days:
+                score -= 10
 
             # To prevent 2 way score checking (we don't want to check distances between the same locations twice,
             # that would be a waste of both computing power and time from Google api)
