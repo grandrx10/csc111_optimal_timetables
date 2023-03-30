@@ -24,7 +24,7 @@ class Lecture:
     lect_code: str
     sessions: list[Session]
 
-    def __init__(self, lect_code, sessions: list[Session]) -> None:
+    def __init__(self, lect_code: str, sessions: list[Session]) -> None:
         """
         Initialize a lecture with a list of sessions
 

@@ -131,25 +131,24 @@ class Schedule:
         """
         path_copy = path.copy()
         path_copy.reverse()
-        sessions = self._get_list_sessions_in_path(path_copy)
-        return Timetable(sessions, path)
+        lectures = self._get_list_lectures_in_path(path_copy)
+        return Timetable(lectures)
 
-    def _get_list_sessions_in_path(self, path: list[str]) -> list[Session]:
+    def _get_list_lectures_in_path(self, path: list[str]) -> list[Lecture]:
         """
         A helper method that recurses and gets all the sessions in a schedule.
         """
         if len(path) == 0:
-            sessions = []
-            for session in self.root_lecture.sessions:
-                sessions.append(session)
-
-            return sessions
+            if len(self.root_lecture.sessions) > 0:
+                return [self.root_lecture]
+            else:
+                return []
         else:
-            sessions = []
+            lectures = []
             next_lect = path.pop()
-            sessions.extend(self.subtrees[next_lect]._get_list_sessions_in_path(path))
+            lectures.extend(self.subtrees[next_lect]._get_list_lectures_in_path(path))
 
-            for session in self.root_lecture.sessions:
-                sessions.append(session)
+            if len(self.root_lecture.sessions) > 0:
+                lectures.append(self.root_lecture)
 
-            return sessions
+            return lectures

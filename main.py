@@ -47,6 +47,6 @@ for course in courses:
 # Display the best timetable
 print("Finding best timetable...")
 best_timetable = schedule.get_best_timetable(len(courses))
-print(best_timetable.lecture_codes)  # This is temporary until we get output working
+print(best_timetable.get_lecture_codes())  # This is temporary until we get output working
 # print("Displaying timetable...")
 # best_timetable.output_timetable()

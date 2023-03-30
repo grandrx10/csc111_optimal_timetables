@@ -22,37 +22,39 @@ class Timetable:
         - table: a dictionary mapping days of the week to the locations of lectures at appropriate times.
         - lecture_codes: a list of all lectures to register for
     """
-    table: set[Session]
-    lecture_codes: list[str]
+    table: dict[str, set[Session]]
 
-    def __init__(self, sessions: list[Session], lecture_codes: list[str]) -> None:
+    def __init__(self, lectures: list[Lecture]) -> None:
         """
         Create an empty timetable. Each element of the list represents one hour.
 
         Note: Timetable starts at 8:00 AM and goes to 10:00 PM
         """
-        self.lecture_codes = lecture_codes
-        self.sessions = set()
-        for session in sessions:
-            self.sessions.add(session)
+        self.table = dict()
+        for lecture in lectures:
+            self.table[lecture.lect_code] = set()
+            for session in lecture.sessions:
+                self.table[lecture.lect_code].add(session)
 
-    def add_session(self, session: Session) -> None:
+    def get_sessions(self) -> set[Session]:
         """
-        Add the given session to the schedule.
+        Return a set of all sesssions in the timetable
+        """
+        sessions = set()
+        for lect_code in self.table:
+            for session in self.table[lect_code]:
+                sessions.add(session)
 
-        Implementation Notes:
-        - Fill in the slots at the correct corresponding times.
-        - since the actual position of the item in the list will keep track of the time, as the actual string, put the
-        building location.
-        """
-        self.sessions.add(session)
+        return sessions
 
-    def add_lecture(self, lecture: Lecture) -> None:
+    def get_lecture_codes(self) -> list[str]:
         """
-        Given a lecture, place the lecture's sessions into the table.
+        Return a list of all lecture codes
         """
-        for i in range(len(lecture.sessions)):
-            self.sessions.add(lecture.sessions[i])
+        lect_codes = []
+        for lect_code in self.table:
+            lect_codes.append(lect_code)
+        return lect_codes
 
     def output_timetable(self) -> None:
         """
@@ -65,10 +67,12 @@ class Timetable:
         Calculate the timetable score from the given sessions.
         """
         score = 100
-
-        sessions_copy = self.sessions.copy()
-        for session in self.sessions:
+        sessions = self.get_sessions()
+        sessions_copy = self.get_sessions()
+        # Compare each session to one another to look for them being adjacent
+        for session in sessions:
             for other_session in sessions_copy:
+                # if they are adjacent, then check the amount of time it takes to walk from one location to another
                 if session.adjacent(other_session) and session != other_session:
                     travel_time = get_travel_time(session.location, other_session.location)
                     if travel_time > 10:
