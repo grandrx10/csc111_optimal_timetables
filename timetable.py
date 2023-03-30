@@ -70,7 +70,8 @@ class Timetable:
         for session in sessions:
             for other_session in sessions_copy:
                 # if they are adjacent, then check the amount of time it takes to walk from one location to another
-                if session.adjacent(other_session) and session != other_session:
+                if session.adjacent(other_session) and session != other_session and session.location != "NA" \
+                        and other_session.location != "NA":
                     travel_time = get_travel_time(session.location, other_session.location)
                     if travel_time > 10:
                         score -= travel_time
