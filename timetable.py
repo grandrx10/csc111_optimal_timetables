@@ -14,7 +14,6 @@ from time_h import Time
 from google_maps_location import get_travel_time
 import pygame
 from pygame.locals import *
-from schedule_rect import ScheduleRect
 
 
 class Timetable:
@@ -59,13 +58,15 @@ class Timetable:
             lect_codes.append(lect_code)
         return lect_codes
 
-    def get_score(self, exclusion_days: set[str]) -> int | float:
+    def get_score(self, exclusion_days: set[str], start_end_times: tuple[int, int]) -> int | float:
         """
         Calculate the timetable score from the given sessions.
         """
         score = 100
         sessions = self.get_sessions()
         sessions_copy = self.get_sessions()
+        prefered_start_time, prefered_end_time = start_end_times
+
         # Compare each session to one another to look for them being adjacent
         for session in sessions:
             for other_session in sessions_copy:
@@ -79,6 +80,11 @@ class Timetable:
             if session.day in exclusion_days:
                 score -= 10
 
+            if session.start_time.hours < prefered_start_time:
+                score -= 10
+            if session.end_time.hours > prefered_end_time:
+                score -= 10
+
             # To prevent 2 way score checking (we don't want to check distances between the same locations twice,
             # that would be a waste of both computing power and time from Google api)
             sessions_copy.remove(session)
@@ -90,8 +96,3 @@ class Timetable:
         Use Plotly or Pygame to output all sessions on the timetable into a chart
         """
         # TODO implement Create several Schedule Rects and display them
-
-    def get_xy_coord(self, session: Session) -> tuple[int, int]:
-        """
-        Given a session, return its x and y coordinates on the schedule
-        """

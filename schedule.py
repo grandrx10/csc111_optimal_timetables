@@ -104,7 +104,8 @@ class Schedule:
 
             return paths
 
-    def get_best_timetable(self, course_count: int, exclusion_days: set[str]) -> Timetable:
+    def get_best_timetable(self, course_count: int, exclusion_days: set[str],
+                           start_end_times: tuple[int, int]) -> Timetable:
         """
         Given the number of courses, construct and return the best possible timetable in that tree.
 
@@ -117,7 +118,7 @@ class Schedule:
 
         for path in valid_paths:
             timetable = self.get_timetable(path)
-            score = timetable.get_score(exclusion_days)
+            score = timetable.get_score(exclusion_days, start_end_times)
 
             if best_score is None or score > best_score:
                 best_timetable = timetable

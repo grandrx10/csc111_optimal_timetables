@@ -77,15 +77,9 @@ class Catalogue:
                                 end_time = Time(end_time_hour, end_time_min)
 
                                 day = sessions_info[session]["meetingDay"]
-
-                                if location_is_valid(sessions_info[session]["assignedRoom1"]):
-                                    location = self.uoft_building_to_address(
-                                        sessions_info[session]["assignedRoom1"][:2])
-                                elif location_is_valid(sessions_info[session]["assignedRoom2"]):
-                                    location = self.uoft_building_to_address(
-                                        sessions_info[session]["assignedRoom2"][:2])
-                                else:
-                                    location = "NA"
+                                # TEMP
+                                location = self.uoft_building_to_address(
+                                    sessions_info[session]["assignedRoom1"][:2])
 
                                 session = Session((start_time, end_time), day, location)
 
@@ -118,7 +112,10 @@ class Catalogue:
         """
         Given a uoft building code, return an address that is usable by google maps.
         """
-        return self.building_codes[building_code]
+        if building_code in self.building_codes:
+            return self.building_codes[building_code]
+        else:
+            return "NA"
 
     def read_csv_building_code(self, csv_file: str) -> None:
         """
@@ -131,11 +128,3 @@ class Catalogue:
             for row in reader:
                 for i in range(0, 1):
                     self.building_codes[str(row[i+1])] = str(row[i])
-
-
-def location_is_valid(location: str) -> bool:
-    """Check if the given location is a valid building code at UofT"""
-    if location is not None and location != '':
-        if location[-1] in set(range(0, 10)):
-            return True
-    return False
