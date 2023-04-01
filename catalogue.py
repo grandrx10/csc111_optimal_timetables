@@ -56,8 +56,7 @@ class Catalogue:
         # "F" and "Y" section codes, or the input term is "S", in which case we're looking
         # for the courses with "S" section code only.
         for course_name in raw_data:   # traversing each course in the dataset
-            if course_name[:6] in self.wanted_courses and (course_name[9] == term or
-                                                           (term == "F" and course_name[9] == 'Y')):
+            if course_name[:6] in self.wanted_courses and (course_name[9] == term or course_name[9] == 'Y'):
                 course_info = raw_data[course_name]['meetings']
                 lectures = []
                 for lecture_name in course_info:   # traversing each lecture/tutorial in the current course
