@@ -18,7 +18,8 @@ class Lecture:
 
     Instance Attributes:
         - sessions: a list of sessions that must be taken in this lecture section.
-        - lect_code: Combine the course code with the lecture code. (Example: "csc111 lec101")
+        - lect_code: Combine the course code with the lecture code. This will be the identifier for the lecture
+        (Example: "csc111 lec101")
     """
     lect_code: str
     sessions: list[Session]
@@ -30,7 +31,7 @@ class Lecture:
         Test initialization:
         >>> s1 = Session(time=(Time(1, 15), Time(2, 30)), day="MON", location="THIS PLACE")
         >>> s2 = Session(time=(Time(1, 15), Time(20, 30)), day="TUES", location="THAT PLACE")
-        >>> lecture = Lecture([s1, s2])
+        >>> lecture = Lecture("Lect_code", [s1, s2])
         >>> lecture.sessions[0].day
         'MON'
         """
@@ -40,6 +41,20 @@ class Lecture:
     def conflict(self, other: Lecture) -> bool:
         """
         Return if this lecture section conflicts with another lecture section.
+
+        >>> s1 = Session(time=(Time(1, 15), Time(2, 30)), day="MON", location="THIS PLACE")
+        >>> s2 = Session(time=(Time(1, 15), Time(20, 30)), day="TUES", location="THAT PLACE")
+        >>> lecture1 = Lecture("LECT_CODE", [s1, s2])
+        >>> s3 = Session(time=(Time(1, 15), Time(2, 30)), day="MON", location="THIS PLACE")
+        >>> s4 = Session(time=(Time(1, 15), Time(20, 30)), day="TUES", location="THAT PLACE")
+        >>> lecture2 = Lecture("LECT_CODE", [s3, s4])
+        >>> lecture1.conflict(lecture2)
+        True
+        >>> s5 = Session(time=(Time(1, 15), Time(2, 30)), day="THU", location="THIS PLACE")
+        >>> s6 = Session(time=(Time(1, 15), Time(20, 30)), day="FRI", location="THAT PLACE")
+        >>> lecture3 = Lecture("LECT_CODE", [s5, s6])
+        >>> lecture3.conflict(lecture1)
+        False
         """
         for i in range(len(self.sessions)):
             for c in range(len(other.sessions)):

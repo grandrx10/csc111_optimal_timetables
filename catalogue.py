@@ -7,13 +7,12 @@ Authors: Richard, Hussain, Riyad, Hannah
 """
 
 from __future__ import annotations
-from typing import Optional, Any
 import json
+import csv
 from course import Course
 from lecture import Lecture
 from session import Session
 from time_h import Time
-import csv
 
 
 class Catalogue:
@@ -134,7 +133,7 @@ class Catalogue:
 
             for row in reader:
                 for i in range(0, 1):
-                    self.building_codes[str(row[i+1])] = str(row[i])
+                    self.building_codes[str(row[i + 1])] = str(row[i])
 
 
 if __name__ == '__main__':
@@ -148,7 +147,7 @@ if __name__ == '__main__':
     import python_ta
 
     python_ta.check_all(config={
-        'extra-imports': [],  # the names (strs) of imported modules
+        'extra-imports': ['json', 'course', 'lecture', 'session', 'time_h', 'csv'],
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })

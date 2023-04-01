@@ -18,20 +18,19 @@ class Timetable:
     A class that will hold lecture locations and times.
 
     Instance Attributes:
-        - table: a dictionary mapping days of the week to the locations of lectures at appropriate times.
-        - lecture_codes: a list of all lectures to register for
+        - table: a dictionary mapping lecture codes to the set of sessions that the lecture has
     """
     table: dict[str, set[Session]]
 
     def __init__(self, lectures: list[Lecture]) -> None:
         """
-        Create an empty timetable. Each element of the list represents one hour.
-
-        Note: Timetable starts at 8:00 AM and goes to 10:00 PM
+        Create a timetable with a given list of lectures
         """
         self.table = {}
         for lecture in lectures:
+            # initialize an empty set for each lecture code
             self.table[lecture.lect_code] = set()
+            # add all the sessions into the set
             for session in lecture.sessions:
                 self.table[lecture.lect_code].add(session)
 
@@ -48,7 +47,7 @@ class Timetable:
 
     def get_lecture_codes(self) -> list[str]:
         """
-        Return a list of all lecture codes
+        Return a list of codes for all lectures in the timetable
         """
         lect_codes = []
         for lect_code in self.table:
@@ -69,7 +68,18 @@ class Timetable:
 
     def get_score(self, exclusion_days: set[str], start_end_times: tuple[int, int]) -> int | float:
         """
-        Calculate the timetable score from the given sessions.
+        Calculate the timetable score from the given sessions. The parameters will include 2 items: exclusion_days
+        and start_end_times.
+
+        exclusion_days: days when the student doesn't want to go to school.
+        start_end_times: the hour at which the student wants to start and end their day of school.
+
+        Implementation Notes:
+        - Start at a score of 100
+        - For each imperfection in the timetable, subtract score
+        - For each hour of classes outside the acceptable time range, subtract 5 points
+        - Subtract score for amount of time it takes to walk between classes if it is more than 10 minutes walk (Do so
+        only when the sessions are adjacent to one another.
         """
         score = 100
         sessions = self.get_sessions()

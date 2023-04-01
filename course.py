@@ -12,8 +12,8 @@ from lecture import Lecture
 
 class Course:
     """
-    A class that represents a lecture section. Includes all classes (their times and locations) for that lecture
-    section.
+    A class that represents an entire course (like CSC111). It will contain all available lectures for that course in
+    a list.
 
     Instance Attributes:
         - available_lectures: a list of all possible lectures offered for this course
@@ -23,9 +23,6 @@ class Course:
     def __init__(self, available_lectures: list[Lecture]) -> None:
         """
         Initialize a course with a list of available lectures for that course
-
-        Test initialization:
-
         """
         self.available_lectures = available_lectures
 
@@ -47,7 +44,7 @@ if __name__ == '__main__':
     import python_ta
 
     python_ta.check_all(config={
-        'extra-imports': [],  # the names (strs) of imported modules
+        'extra-imports': ['lecture'],  # the names (strs) of imported modules
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })

@@ -6,9 +6,8 @@ two places.
 --------------
 Authors: Richard, Hussain, Riyad, Hannah
 """
-
-import googlemaps
 import datetime
+import googlemaps
 API_KEY = 'AIzaSyDmhjbDyLYlW-2OQyvcLt0qjOYKDozhUt8'
 gmaps = googlemaps.Client(key=API_KEY)
 
@@ -34,7 +33,7 @@ if __name__ == '__main__':
     import python_ta
 
     python_ta.check_all(config={
-        'extra-imports': [],  # the names (strs) of imported modules
+        'extra-imports': ['googlemaps', 'datetime'],  # the names (strs) of imported modules
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })

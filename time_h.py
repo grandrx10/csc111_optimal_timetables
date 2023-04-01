@@ -20,7 +20,13 @@ class Time:
         self.hours = hours
         self.minutes = minutes
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: Time) -> bool:
+        """
+        >>> t1 = Time(1, 10)
+        >>> t2 = Time(3, 10)
+        >>> t2 > t1
+        True
+        """
         if self.hours > other.hours:
             return True
         elif self.hours == other.hours and self.minutes > other.minutes:
@@ -28,17 +34,35 @@ class Time:
         else:
             return False
 
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other: Time) -> bool:
+        """
+        >>> t1 = Time(1, 10)
+        >>> t2 = Time(1, 10)
+        >>> t2 >= t1
+        True
+        """
         if self.__gt__(other) or self.__eq__(other):
             return True
         return False
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other: Time) -> bool:
+        """
+        >>> t1 = Time(10, 10)
+        >>> t2 = Time(3, 10)
+        >>> t2 <= t1
+        True
+        """
         if self.__lt__(other) or self.__eq__(other):
             return True
         return False
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: Time) -> bool:
+        """
+        >>> t1 = Time(10, 10)
+        >>> t2 = Time(3, 10)
+        >>> t2 < t1
+        True
+        """
         if self.hours < other.hours:
             return True
         elif self.hours == other.hours and self.minutes < other.minutes:
@@ -46,7 +70,13 @@ class Time:
         else:
             return False
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Time) -> bool:
+        """
+        >>> t1 = Time(10, 10)
+        >>> t2 = Time(10, 10)
+        >>> t2 == t1
+        True
+        """
         if self.hours == other.hours and self.minutes == other.minutes:
             return True
         return False

@@ -30,7 +30,9 @@ class Session:
         Initialize a session. The first element of the time tuple is the start time and
         the second element is the end time.
 
-        Test intializer: session = Session(time=(Time(1, 15), Time(2, 30)), day="MON", location="THIS PLACE")
+        >>> session = Session(time=(Time(1, 15), Time(2, 30)), day="MON", location="THIS PLACE")
+        >>> session.day
+        'MON'
         """
         self.start_time = time[0]
         self.end_time = time[1]
@@ -39,7 +41,9 @@ class Session:
 
     def conflict(self, other: Session) -> bool:
         """
-        Return if this session conflicts with another session.
+        Return if this session conflicts with another session. This happens when one session's hours overlap the other
+        session's hours.
+
         >>> s1 = Session((Time(1, 40), Time(4, 20)), "MON", "Mining Building")
         >>> s2 = Session((Time(3, 0), Time(6, 0)), "MON", "Mining Building")
         >>> s1.conflict(s2)
@@ -60,6 +64,7 @@ class Session:
         """
         Return if this session is directly adjacent to the other session (when this session ends, the other starts, or
         when this session starts is the end of the other session)
+
         >>> s1 = Session((Time(1, 40), Time(4, 20)), "MON", "Mining Building")
         >>> s2 = Session((Time(4, 20), Time(5, 20)), "MON", "Mining Building")
         >>> s1.adjacent(s2)
@@ -78,7 +83,7 @@ class Session:
         contained in the range between the start and end time.
 
         Precondition:
-        - rx - xy in compare is == 1
+        - the time difference between xy: 00 and rz: 00 is 1 hour
         """
 
         compare_again = str.split(compare)
