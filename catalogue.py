@@ -49,51 +49,54 @@ class Catalogue:
         - term in {F, S} (Year-long courses are included in the 'F' category)
         - Courses in wanted_courses can be written in any of the following formats: 'CSC111', 'csc111', 'Csc111', etc.
         """
-        self.wanted_courses = {course.upper() for course in wanted_courses}
+        self.wanted_courses = {course.upper() for course in wanted_courses}     # initializing the respective attributes
         self.data = {}
         self.building_codes = {}
         self.read_csv_building_code('building_names_and_addresses.csv')
-
-        with open('all_data.json') as file:
+        
+        with open('all_data.json') as file:      # loading the data from dataset
             raw_data = json.load(file)
-
-        for course_name in raw_data:
+        
+        for course_name in raw_data:   # traversing each course in the dataset
             if course_name[:6] in self.wanted_courses and (course_name[9] == term or
-                                                           (term == "F" and course_name[9] == 'Y')):
-                course_info = raw_data[course_name]['meetings']
+                                                           (term == "F" and course_name[9] == 'Y')): # either the input term is "F", in which case we're looking for the courses with 
+                                                                                                     # "F" and "Y" section codes, or the input term is "S", in which case we're looking 
+                                                                                                     # for the courses with "S" section code only. 
+                course_info = raw_data[course_name]['meetings']   
                 lectures = []
-                for lecture_name in course_info:
-                    if lecture_name[:3] == 'LEC':
+                for lecture_name in course_info:   # traversing each lecture/tutorial in the current course
+                    if lecture_name[:3] == 'LEC':   # excluding the "tutorials"
                         sessions_info = course_info[lecture_name]['schedule']
                         sessions = []
-                        for session in sessions_info:
+                        for session in sessions_info:      # traversing each session in the current lecture
                             if sessions_info[session]["meetingStartTime"] is not None:
-                                start_time_hour = int(sessions_info[session]["meetingStartTime"][:2])
+                                start_time_hour = int(sessions_info[session]["meetingStartTime"][:2]) 
                                 start_time_min = int(sessions_info[session]["meetingStartTime"][3:])
-                                start_time = Time(start_time_hour, start_time_min)
+                                start_time = Time(start_time_hour, start_time_min) # initializing the start time
 
                                 end_time_hour = int(sessions_info[session]["meetingEndTime"][:2])
                                 end_time_min = int(sessions_info[session]["meetingEndTime"][3:])
-                                end_time = Time(end_time_hour, end_time_min)
+                                end_time = Time(end_time_hour, end_time_min)    # initializing the end time
 
-                                day = sessions_info[session]["meetingDay"]
+                                day = sessions_info[session]["meetingDay"]  # extracting the day info
                                 # TEMP
                                 location = self.uoft_building_to_address(
                                     sessions_info[session]["assignedRoom1"][:2])
 
-                                session = Session((start_time, end_time), day, location)
+                                session = Session((start_time, end_time), day, location)    # initializing the Session() class with the relevant info
 
-                                sessions += [session]
+                                sessions += [session]   # adding it into the sessions list
 
                         if sessions:
-                            lect_code = f'{course_name[:6]} {lecture_name}'
-                            lecture = Lecture(lect_code, sessions)
+                            lect_code = f'{course_name[:6]} {lecture_name}'     # getting the right lecture code format for the Lecture() class
+                            lecture = Lecture(lect_code, sessions)  # initializing the Lecture() class with the relevant info
                             lectures += [lecture]
 
                 if lectures:
-                    self.data[course_name[:6]] = Course(lectures)
+                    self.data[course_name[:6]] = Course(lectures)   # initializing the Course() class with the relevant info
 
-        for course_name in self.wanted_courses:
+        for course_name in self.wanted_courses:     # this branch shouldn't be reached as long as the preconditions are followed. 
+                                                    # it checks if all courses in the input wanted_courses set could be found in the dataset.
             if course_name not in self.data:
                 raise KeyError(f'{course_name} is not a valid course code or is not offered in {term} term')
 
