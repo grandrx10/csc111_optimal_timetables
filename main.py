@@ -95,8 +95,8 @@ print(best_timetable.get_lecture_codes())  # This is temporary until we get outp
 for key in best_timetable.table:
     for session in best_timetable.table[key]:
         print(session.location)
-# print("Displaying timetable...")
-# best_timetable.output_timetable()
+print("Displaying timetable...")
+# best_timetable.output_timetable() this was changed, function call is made below.
 
 
 def max_time() -> int:
