@@ -79,6 +79,9 @@ class Catalogue:
                                 if sessions_info[session]["assignedRoom1"] is not None:
                                     location = self.uoft_building_to_address(
                                         sessions_info[session]["assignedRoom1"][:2])
+                                elif sessions_info[session]["assignedRoom2"] is not None:
+                                    location = self.uoft_building_to_address(
+                                        sessions_info[session]["assignedRoom2"][:2])
                                 else:
                                     location = "NA"
 

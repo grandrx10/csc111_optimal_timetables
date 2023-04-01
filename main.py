@@ -27,6 +27,7 @@ while term not in {"F", "S"}:
 # all courses are valid.
 courses = ...
 catalogue = ...
+schedule = ...
 courses_not_valid = True
 while courses_not_valid:
     courses_not_valid = False
@@ -45,6 +46,17 @@ while courses_not_valid:
         print("One or more of the entered courses were not valid.")
         courses_not_valid = True
         user_input = ""
+
+    # Initialize the tree
+    schedule = Schedule(DEFAULT_LECTURE)
+    # Add the appropriate courses to the schedule tree
+    for course in courses:
+        lect_list = catalogue.get_possible_lect_sessions(course)
+        schedule.add_course(lect_list)
+    # If the courses are completely conflicting with one another, then there is no possible timetable.
+    if not schedule.get_valid_paths(len(courses)):
+        courses_not_valid = True
+        print("One or more of the entered courses completely conflict with one another!")
 
 # Ask the user for which days they would prefer not to have school. This does NOT mean that it's guaranteeed.
 print("Please enter which days you don't want to take classes below. Days are MO, TU, WE, TH, FR.")
@@ -71,15 +83,6 @@ while not user_input.isnumeric() or not 9 <= int(user_input) <= 22:
     print("Please enter a valid hour.")
     user_input = input()
 end_hour = int(user_input)
-
-# Initialize the catalogue and schedule tree
-print("Creating timetable...")
-schedule = Schedule(DEFAULT_LECTURE)
-
-# Add the appropriate courses to the schedule tree
-for course in courses:
-    lect_list = catalogue.get_possible_lect_sessions(course)
-    schedule.add_course(lect_list)
 
 # Display the best timetable
 print("Finding best timetable...")
