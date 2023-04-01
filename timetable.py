@@ -178,9 +178,9 @@ class Timetable:
         - indexes: indexes[0] is used to check the time column and indexes[1] is used to check the day column.
 
         - We are in a right spot when:
-        1.The session's start to end time hour range is the same as where we currently at in the time column  OR the
-        where we currently are in the time column (i.e. 9:00 - 10:00) is contained in the session's start to end
-        time hour range. (that is when the hour range of the session is longer than an hour)
+        1.The session's start to end time hour range is the same as where we currently at in the time column  OR where
+        we currently are in the time column (i.e. 9:00 - 10:00) is contained in the session's start to end time hour
+        range. (that is when the hour range of the session is longer than an hour)
 
         AND
 
