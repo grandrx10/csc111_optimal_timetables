@@ -186,5 +186,5 @@ class Timetable:
                        align='left'))
         ])
 
-        fig.update_layout(width=2000, height=2000)
+        fig.update_layout(width=2500, height=2500)
         fig.show()
