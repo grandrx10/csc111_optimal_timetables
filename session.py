@@ -47,9 +47,12 @@ class Session:
         >>> s3 = Session((Time(4, 30), Time(6, 0)), "MON", "Mining Building")
         >>> s1.conflict(s3)
         False
+        >>> s1 = Session((Time(9, 0), Time(10, 0)), "MON", "Mining Building")
+        >>> s2 = Session((Time(9, 0), Time(11, 0)), "MON", "Jord")
+        >>> s1.conflict(s2)
+        True
         """
-        if self.day == other.day and self.start_time <= other.end_time and self.end_time >= other.start_time \
-                and self.location == other.location:
+        if self.day == other.day and self.start_time <= other.end_time and self.end_time >= other.start_time:
             return True
         return False
 
