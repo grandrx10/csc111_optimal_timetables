@@ -205,13 +205,13 @@ class Timetable:
 
     def output_timetable(self) -> None:
         """
-        Output the generated timetable using plotly. The table consists of columns whose headers represent one hour time periods and 
-        rows represent days of the week. Each piece of information in the interior of the table consists of a lecture code and a lecture
-        location, written in parentheses. If a class is not scheduled for whatsoever combination of time period and day, that section of the
-        table will be an empty cell. 
+        Output the generated timetable using plotly. The table consists of columns whose headers represent one hour time 
+        periods and rows represent days of the week. Each piece of information in the interior of the table consists of 
+        a lecture code and a lecture location, written in parentheses. If a class is not scheduled for whatsoever combination 
+        of time period and day, that section of the table will be an empty cell. 
         
-        Note: Horizontal scrolling is enabled for our table, given the possibility of a large maximum hour in a set of sessions (i.e. 22)
-        (vertical scrolling is also enabled)
+        Note: Horizontal scrolling is enabled for our table, given the possibility of a large maximum hour in a set of sessions 
+        i.e. 22 / 10:00 pm (vertical scrolling is also enabled)
         
         """
         skeleton = self.skeleton()
