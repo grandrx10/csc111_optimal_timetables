@@ -7,7 +7,6 @@ Authors: Richard, Hussain, Riyad, Hannah
 """
 
 from __future__ import annotations
-from typing import Optional, Any
 from time_h import Time
 
 
@@ -67,12 +66,13 @@ class Session:
         """
         if self.day == other.day and (self.end_time == other.start_time or self.start_time == other.end_time):
             return True
+        return False
 
     def time_check(self, compare: str) -> bool:
         """
         Compare is a string in the form xy :00 - rz :00 where y and r may or may not be 0. Given the start and end time
-        of the session, this function aims to tell us if the time is the same as the string or if the string is contained
-        in the range between the start and end time.
+        of the session, this function aims to tell us if the time is the same as the string or if the string is
+        contained in the range between the start and end time.
 
         Precondition:
         - rx - xy in compare is == 1
@@ -84,3 +84,17 @@ class Session:
             return True
         else:
             return False
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=True)
+
+    # When you are ready to check your work with python_ta, uncomment the following lines.
+    # (In PyCharm, select the lines below and press Ctrl/Cmd + / to toggle comments.)
+    # You can use "Run file in Python Console" to run PythonTA,
+    # and then also test your methods manually in the console.
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 120
+    })

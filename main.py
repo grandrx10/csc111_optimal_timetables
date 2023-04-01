@@ -7,15 +7,9 @@ Authors: Richard, Hussain, Riyad, Hannah
 """
 
 from __future__ import annotations
-from typing import Optional, Any
 from lecture import Lecture
 from catalogue import Catalogue
 from schedule import Schedule
-from timetable import Timetable
-from google_maps_location import get_travel_time
-
-import plotly.graph_objs as go
-from session import Session
 
 DEFAULT_LECTURE = Lecture('', [])
 
@@ -39,7 +33,7 @@ while courses_not_valid:
     print("Please enter what courses you want one by one below. Type 'end' when you are done with your wanted courses.")
     # Ask the user for the courses they want
     courses = set()
-    while user_input.lower() != "end":
+    while user_input.lower() != "end" or len(courses) < 1:
         user_input = input("Enter course " + str(len(courses) + 1) + ": ")
         if user_input != "end":
             courses.add(user_input)
@@ -91,9 +85,8 @@ for course in courses:
 print("Finding best timetable...")
 best_timetable = schedule.get_best_timetable(len(courses), exclusion_days, (start_hour, end_hour))
 print(best_timetable.get_lecture_codes())  # This is temporary until we get output working
-for key in best_timetable.table:
-    for session in best_timetable.table[key]:
-        print(session.location)
 print("Displaying timetable...")
+# best_timetable.output_timetable() this was changed, function call is made below.
 
+# testing()  call this if you want to see the timetable in primitive form
 best_timetable.output_timetable()

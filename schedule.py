@@ -7,11 +7,8 @@ Authors: Richard, Hussain, Riyad, Hannah
 """
 
 from __future__ import annotations
-from typing import Optional, Any
 from lecture import Lecture
-from session import Session
 from timetable import Timetable
-from time_h import Time
 
 DEFAULT_LECTURE = Lecture('', [])
 
@@ -43,8 +40,6 @@ class Schedule:
         - Recurse into subtrees and add_course with copied list
         - Once there are no subtrees (you are at a leaf) then, add new schedules with their roots being the lectures.
         """
-        # TODO Testing / Update lecture.conflict to deal with the case when root_lecture == DEFAULT_LECTURE(1st course)
-
         # Create a copy of 'lectures', with only lectures that do not have conflicts with current lecture
         lectures_copy = []
         for lecture in lectures:
@@ -77,7 +72,7 @@ class Schedule:
         - for each new path, add a new list
         """
         paths = self._helper_get_paths(courses_count, 0)
-        for i in range(len(paths)-1, 0, -1):
+        for i in range(len(paths) - 1, 0, -1):
             if len(paths[i]) < courses_count:
                 paths.pop(i)
 
@@ -89,20 +84,20 @@ class Schedule:
         """
         if curr_depth == depth_to_reach:
             return [[self.root_lecture.lect_code]]
-        else:
-            paths = []
-            for i in self.subtrees:
-                # self.subtrees[i] refers to the schedule below this one in the recursive tree
-                returned_list = self.subtrees[i]._helper_get_paths(depth_to_reach, curr_depth + 1)
+        # Else
+        paths = []
+        for i in self.subtrees:
+            # self.subtrees[i] refers to the schedule below this one in the recursive tree
+            returned_list = self.subtrees[i]._helper_get_paths(depth_to_reach, curr_depth + 1)
 
-                # Note, this is for the case that we are on the starting lecture (default lect)
-                # We do not want to include the starting lecture in our returned list.
-                if curr_depth != 0:
-                    for c in range(len(returned_list)):
-                        returned_list[c].insert(0, self.root_lecture.lect_code)
-                paths.extend(returned_list)
+            # Note, this is for the case that we are on the starting lecture (default lect)
+            # We do not want to include the starting lecture in our returned list.
+            if curr_depth != 0:
+                for path in returned_list:
+                    path.insert(0, self.root_lecture.lect_code)
+            paths.extend(returned_list)
 
-            return paths
+        return paths
 
     def get_best_timetable(self, course_count: int, exclusion_days: set[str],
                            start_end_times: tuple[int, int]) -> Timetable:
@@ -155,3 +150,17 @@ class Schedule:
                 lectures.append(self.root_lecture)
 
             return lectures
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=True)
+
+    # When you are ready to check your work with python_ta, uncomment the following lines.
+    # (In PyCharm, select the lines below and press Ctrl/Cmd + / to toggle comments.)
+    # You can use "Run file in Python Console" to run PythonTA,
+    # and then also test your methods manually in the console.
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 120
+    })

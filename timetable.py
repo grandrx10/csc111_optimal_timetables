@@ -7,10 +7,8 @@ Authors: Richard, Hussain, Riyad, Hannah
 """
 
 from __future__ import annotations
-from typing import Optional, Any
 from lecture import Lecture
 from session import Session
-from time_h import Time
 from google_maps_location import get_travel_time
 import plotly.graph_objs as go
 
@@ -122,16 +120,12 @@ class Timetable:
         Each list in the list of lists from index 1 to a maximum of 13 represents an hour (i.e 9:00 - 10:00). Index 0
         represents the days of the week. Each item in the list represents a lecture and lecture location arranged by
         order of days of the week.
-
         For example:(["", 9:00 - 10:00], [['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         [math, chem, physics,"",""]] )
-
         This means math was taken on Monday, chem on Tuesday, physics on Wednesday all at the hours of 9-10 but on
         thursday and friday at the hours of 9-10, no classes were held.
-
         Essentially, this is the skeleton of our timetable which holds the information in the right order to be
         understood by plotly.
-
         Preconditions:
         - 0 <= len(self.skeleton()[1]) <= 14
         - len(self.skeleton()[0]) == len(self.skeleton()[1])
@@ -161,7 +155,6 @@ class Timetable:
         """
         This helper function has the responsibility of breaking our code into sizeable chunks in order to get a result
         that will be used in the final output.
-
         - to_mutate: is the list mutated by this code and is the returned list in self.skeleton().
         - lect_code: is the lecture code that will be shown in our timetable.
         - check: is what this loop will essentially be checking to know if it's in a right spot to mutate the
@@ -172,7 +165,6 @@ class Timetable:
         start - end time hour range (that is when the hour range of the session is longer than an hour)
         2. session.day corresponds to index2 in the sense that the days of the week all become numbers to check with
         index2. If they are the same, then we are at the right spot to add in time-table information.
-
         """
 
         index_dict = {'MO': 0, 'TU': 1, 'WE': 2, 'TH': 3, 'FR': 4}  # if sesion.day corresponds checker
