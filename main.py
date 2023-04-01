@@ -95,7 +95,5 @@ for key in best_timetable.table:
     for session in best_timetable.table[key]:
         print(session.location)
 print("Displaying timetable...")
-# best_timetable.output_timetable() this was changed, function call is made below.
 
-# testing()  call this if you want to see the timetable in primitive form
 best_timetable.output_timetable()
