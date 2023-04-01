@@ -93,6 +93,19 @@ class Timetable:
 
     def output_timetable(self) -> None:
         """
-        Use Plotly or Pygame to output all sessions on the timetable into a chart
+        Use Plotly to output all sessions on the timetable into a chart
         """
-        # TODO implement Create several Schedule Rects and display them
+
+#######################################################################
+# TEST FUNCTION
+
+def convert_to_lst(session: Session) -> list:
+    """ This function was made for testing purposes in order to compare the resulting outputted time-table with the
+     actual information. In case of errors. This converts a session to a primitive list form in order to directly
+     see the information. It can be used in the main_file for example"""
+
+    lst = [session.day, str(session.start_time.hours) + ':' + str(session.start_time.minutes) + '0',
+           str(session.end_time.hours) + ':' + str(session.end_time.minutes) + '0', session.location]
+
+    return lst
+    
