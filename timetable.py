@@ -12,8 +12,7 @@ from lecture import Lecture
 from session import Session
 from time_h import Time
 from google_maps_location import get_travel_time
-import pygame
-from pygame.locals import *
+import plotly.graph_objs as go
 
 
 class Timetable:
@@ -91,21 +90,101 @@ class Timetable:
 
         return score
 
+    ######################################################################
+    # THE FOLLOWING FUNCTIONS ALL CONTRIBUTE TO OUTPUTTING THE TIMETABLE #
+    ######################################################################
+    def max_time(self) -> int:
+        """
+        Return the maximum time in a schedule. This will enable us get the length of our timetable.
+        """
+        big = 0
+        for lectures in self.table:
+            for sessions in self.table[lectures]:
+                compare = sessions.end_time.hours
+                if compare > big:
+                    big = compare
+        return big
+
+    def time_block(self) -> list[str]:
+        """
+        This returns a list of time units to create our table with.
+        """
+        time_lst = ['']
+
+        for i in range(9, self.max_time()):
+            time_lst.append(str(i) + ' :00' + ' - ' + str(i + 1) + ' :00')  # this space needs to be here
+
+        return time_lst
+
+    def skeleton(self) -> tuple[list, list[list[str]]]:
+        """ This will return a tuple containing a list of lecture hours and as many lists of lists as the number of
+        lecture hours. Each list in the list of lists has max 5 entries (for 5 days of the week)
+        Each list from index 1 to a maximum of 13 represents an hour (i.e 9:00 - 10:00). Index 0 represents day of the
+        week. Each item in the list represents a lecture and lecture location arranged by order of days of the week.
+
+        For example:(["", 9:00 - 10:00], [['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        [math, chem, physics,"",""]] )
+
+        This means math was taken on Monday, chem on Tuesday, physics on Wednesday all at the hours of 9-10 but on
+        thursday and friday at the hours of 9-10, no classes were held.
+
+        Essentially, this is the skeleton of our timetable which holds the information in the right order to be
+        understood by plotly.
+
+        Precondition:
+        - 0 <= len(skeleton()[1]) <= 14
+        - len(skeleton()[0]) == len(skeleton()[1])
+        """
+
+        result = [['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']]
+
+        some = len(self.time_block())
+        index_time_check = self.time_block()
+
+        for _ in range(0, some - 1):  # to produce as many columns as the maximum hour intervals
+            result.append(["", "", "", "", ""])
+
+        for i in range(0, some):  # index_1 in helper func
+            if 'Monday' not in result[i]:
+                for j in range(0, 5):  # every sublist must have max 5 things, j is index_2
+                    for lect_code in self.table:
+                        self.helper_func(result, i, j, index_time_check, lect_code)
+
+        return index_time_check, result
+
+    def helper_func(self, to_mutate: list, index1: int, index2: int, check: list, lect_code: str) -> None:
+        """
+        This helper function has the responsibility of breaking our code into sizeable chunks in order to get a list
+        that will be used in the final output.
+
+        - to_mutate is mutated by this code and is the returned list in get_table_information.
+        - check is what this loop will essentially be checking to know if it's in a right spot to mutate the 'to_mutate'
+        list
+        """
+
+        index_dict = {'MO': 0, 'TU': 1, 'WE': 2, 'TH': 3, 'FR': 4}
+
+        for session in self.table[lect_code]:
+            if session.time_check(check[index1]):  # checking if in right time column
+                day_index = index_dict[session.day]
+                if index2 == day_index:
+                    to_mutate[index1][index2] = lect_code + " " + "(" + session.location + ")"
+
     def output_timetable(self) -> None:
         """
-        Use Plotly to output all sessions on the timetable into a chart
+        Output the generated timetable using plotly.
         """
+        skeleton = self.skeleton()
+        fig = go.Figure(data=[go.Table(
+            header=dict(values=skeleton[0],
+                        line_color='darkslategray',
+                        fill_color='lightskyblue',
+                        align='left'),
+            cells=dict(values=skeleton[1],
+                       line_color='darkslategray',
+                       fill_color='lightcyan',
+                       align='left'))
+        ])
 
-#######################################################################
-# TEST FUNCTION
-
-def convert_to_lst(session: Session) -> list:
-    """ This function was made for testing purposes in order to compare the resulting outputted time-table with the
-     actual information. In case of errors. This converts a session to a primitive list form in order to directly
-     see the information. It can be used in the main_file for example"""
-
-    lst = [session.day, str(session.start_time.hours) + ':' + str(session.start_time.minutes) + '0',
-           str(session.end_time.hours) + ':' + str(session.end_time.minutes) + '0', session.location]
-
-    return lst
-    
+        fig.update_layout(width=2000, height=2000)
+        fig.show()

@@ -67,3 +67,20 @@ class Session:
         """
         if self.day == other.day and (self.end_time == other.start_time or self.start_time == other.end_time):
             return True
+
+    def time_check(self, compare: str) -> bool:
+        """
+        Compare is a string in the form xy :00 - rz :00 where y and r may or may not be 0. Given the start and end time
+        of the session, this function aims to tell us if the time is the same as the string or if the string is contained
+        in the range between the start and end time.
+
+        Precondition:
+        - rx - xy in compare is == 1
+        """
+
+        compare_again = str.split(compare)
+
+        if self.start_time.hours <= int(compare_again[0]) and self.end_time.hours >= int(compare_again[3]):
+            return True
+        else:
+            return False
