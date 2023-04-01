@@ -89,7 +89,4 @@ print("Finding best timetable...")
 best_timetable = schedule.get_best_timetable(len(courses), exclusion_days, (start_hour, end_hour))
 print(best_timetable.get_lecture_codes())  # This is temporary until we get output working
 print("Displaying timetable...")
-# best_timetable.output_timetable() this was changed, function call is made below.
-
-# testing()  call this if you want to see the timetable in primitive form
 best_timetable.output_timetable()
