@@ -18,19 +18,20 @@ class Timetable:
     A class that will hold lecture locations and times.
 
     Instance Attributes:
-        - table: a dictionary mapping lecture codes to the set of sessions that the lecture has
+        - table: a dictionary mapping days of the week to the locations of lectures at appropriate times.
+        - lecture_codes: a list of all lectures to register for
     """
     table: dict[str, set[Session]]
 
     def __init__(self, lectures: list[Lecture]) -> None:
         """
-        Create a timetable with a given list of lectures
+        Create an empty timetable. Each element of the list represents one hour.
+
+        Note: Timetable starts at 8:00 AM and goes to 10:00 PM
         """
         self.table = {}
         for lecture in lectures:
-            # initialize an empty set for each lecture code
             self.table[lecture.lect_code] = set()
-            # add all the sessions into the set
             for session in lecture.sessions:
                 self.table[lecture.lect_code].add(session)
 
@@ -47,7 +48,7 @@ class Timetable:
 
     def get_lecture_codes(self) -> list[str]:
         """
-        Return a list of codes for all lectures in the timetable
+        Return a list of all lecture codes
         """
         lect_codes = []
         for lect_code in self.table:
@@ -68,18 +69,7 @@ class Timetable:
 
     def get_score(self, exclusion_days: set[str], start_end_times: tuple[int, int]) -> int | float:
         """
-        Calculate the timetable score from the given sessions. The parameters will include 2 items: exclusion_days
-        and start_end_times.
-
-        exclusion_days: days when the student doesn't want to go to school.
-        start_end_times: the hour at which the student wants to start and end their day of school.
-
-        Implementation Notes:
-        - Start at a score of 100
-        - For each imperfection in the timetable, subtract score
-        - For each hour of classes outside the acceptable time range, subtract 5 points
-        - Subtract score for amount of time it takes to walk between classes if it is more than 10 minutes walk (Do so
-        only when the sessions are adjacent to one another.
+        Calculate the timetable score from the given sessions.
         """
         score = 100
         sessions = self.get_sessions()
@@ -111,6 +101,7 @@ class Timetable:
     ######################################################################
     # THE FOLLOWING FUNCTIONS ALL CONTRIBUTE TO OUTPUTTING THE TIMETABLE #
     ######################################################################
+    
     def max_time(self) -> int:
         """
         Return the maximum time in a set of sessions. This will enable us get the length of our timetable.
@@ -123,9 +114,9 @@ class Timetable:
                     maximum = compare
         return maximum
 
-    def time_block(self) -> list[str]:
+    def time_columns(self) -> list[str]:
         """
-        Return a list of time units to create the time-table with.
+        Return a list of time units to create the headers which correspond to the columns of our time-table.
         """
         time_lst = ['']
 
@@ -136,16 +127,23 @@ class Timetable:
 
     def skeleton(self) -> tuple[list[str], list[list[str]]]:
         """ Return a tuple containing a list of lecture hours and as many lists of lists as the number of
-        lecture hours. Each list in the list of lists has max 5 entries (for 5 days of the week)
+        lecture hours.
+
+        Each list in the list of lists has max 5 entries (for 5 days of the week).
+
         Each list in the list of lists from index 1 to a maximum of 13 represents an hour (i.e 9:00 - 10:00). Index 0
         represents the days of the week. Each item in the list represents a lecture and lecture location arranged by
-        order of days of the week.
+        order of days of the week. An item or more items in the list could be empty strings for cases when no classes
+        are scheduled for the time in the list of lecture hours.
+
         For example:(["", 9:00 - 10:00], [['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        [math, chem, physics,"",""]] )
-        This means math was taken on Monday, chem on Tuesday, physics on Wednesday all at the hours of 9-10 but on
-        thursday and friday at the hours of 9-10, no classes were held.
+        [Math, Chem, Physics,"",""]] )
+        This means Math was taken on Monday, Chem on Tuesday, Physics on Wednesday all at the hours of 9-10 but on
+        Thursday and Friday at the hours of 9-10, no classes were held.
+
         Essentially, this is the skeleton of our timetable which holds the information in the right order to be
         understood by plotly.
+
         Preconditions:
         - 0 <= len(self.skeleton()[1]) <= 14
         - len(self.skeleton()[0]) == len(self.skeleton()[1])
@@ -154,43 +152,53 @@ class Timetable:
 
         result = [['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']]
 
-        # this is a list of times up to the maximum time in the produced set of sessions in a timetable class. We
-        # check the indexes of this list with the time of the schedule to know if we are at the right spot.
-
-        index_time_check = self.time_block()
         range_end = len(index_time_check)
 
         for _ in range(0, range_end - 1):  # to produce as many columns as the maximum hour intervals
             result.append(["", "", "", "", ""])
 
-        for i in range(0, range_end):  # index_1 in helper func
-            if 'Monday' not in result[i]:
-                for j in range(0, 5):  # every sublist must have max 5 things, j is index_2 in helper_func
-                    for lect_code in self.table:
-                        self.helper_func(result, (i, j), index_time_check, lect_code)
+        for i in range(1, range_end):
+            for j in range(0, 5):  # every sublist must have max 5 items
+                for lect_code in self.table:
+                    self.mutate_list(result, (i, j), lect_code)
 
         return index_time_check, result
 
-    def helper_func(self, to_mutate: list, indexes: tuple[int, int], check: list, lect_code: str) -> None:
+    def mutate_list(self, to_mutate: list, indexes: tuple[int, int], lect_code: str) -> None:
+
         """
-        This helper function has the responsibility of breaking our code into sizeable chunks in order to get a result
-        that will be used in the final output.
+        This is a helper function
+
+        Take a list and mutate it accordingly to represent the information held in the set of sessions. Mutate when
+        we are in a 'right spot'
+
         - to_mutate: is the list mutated by this code and is the returned list in self.skeleton().
-        - lect_code: is the lecture code that will be shown in our timetable.
-        - check: is what this loop will essentially be checking to know if it's in a right spot to mutate the
-        'to_mutate' list. It is a list of 1 hour lecture times up to the maximum lecture time in the produced
-        set of sessions in a timetable class.
+        - lect_code: is the lecture code that will be shown in our timetable underneath a particular time column and day
+        row.
+        - indexes: indexes[0] is used to check the time column and indexes[1] is used to check the day column.
+
         - We are in a right spot when:
-        1. check[index1] == the session's start to end time hour range or check[index1] is contained in the session's
-        start - end time hour range (that is when the hour range of the session is longer than an hour)
-        2. session.day corresponds to index2 in the sense that the days of the week all become numbers to check with
-        index2. If they are the same, then we are at the right spot to add in time-table information.
+        1.The session's start to end time hour range is the same as where we currently at in the time column  OR the
+        where we currently are in the time column (i.e. 9:00 - 10:00) is contained in the session's start to end
+        time hour range. (that is when the hour range of the session is longer than an hour)
+
+        AND
+
+        2. session.day corresponds to indexes[1]. This is in the sense that the days of the week all become numbers to
+        check with indexes[1]. If they are the same, then we are at the right spot to add in time-table information.
         """
+
         index1, index2 = indexes
+        
         index_dict = {'MO': 0, 'TU': 1, 'WE': 2, 'TH': 3, 'FR': 4}  # if sesion.day corresponds checker
+        
+        
+        # this is a list of times up to the maximum time in the produced set of sessions in a timetable class. We
+        # check the indexes of this list with the time of the schedule to know if we are at the right spot.
+        index_time_check = self.time_columns()
 
         for session in self.table[lect_code]:
-            if session.time_check(check[index1]):  # checking if in right time column
+            if session.time_check(index_time_check[index1]):  # checking if in right time column
                 day_index = index_dict[session.day]
                 if index2 == day_index:  # checking if in right day column
                     to_mutate[index1][index2] = lect_code + " " + "(" + session.location + ")"  # mutate!
@@ -211,8 +219,9 @@ class Timetable:
                        align='left'))
         ])
 
-        fig.update_layout(width=2500, height=2500)
+        fig.update_layout(width=2600, height=2800)
         fig.show()
+
 
 
 if __name__ == '__main__':
