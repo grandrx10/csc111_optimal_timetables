@@ -7,10 +7,10 @@ Authors: Richard, Hussain, Riyad, Hannah
 """
 
 from __future__ import annotations
+import plotly.graph_objs as go
 from lecture import Lecture
 from session import Session
 from google_maps_location import get_travel_time
-import plotly.graph_objs as go
 
 
 class Timetable:
@@ -29,7 +29,7 @@ class Timetable:
 
         Note: Timetable starts at 8:00 AM and goes to 10:00 PM
         """
-        self.table = dict()
+        self.table = {}
         for lecture in lectures:
             self.table[lecture.lect_code] = set()
             for session in lecture.sessions:
@@ -55,6 +55,18 @@ class Timetable:
             lect_codes.append(lect_code)
         return lect_codes
 
+    def helper_get_score_travel(self, session: Session, other_session: Session, score: int | float) -> int | float:
+        """
+        A helper method for getting a score. This method will get the distance between two sessions and return
+        a modified score based on the distance. This is to ensure that the optimal schedule has reduced walking time.
+        """
+        if session.location != "NA" and other_session.location != "NA":
+            travel_time = get_travel_time(session.location, other_session.location)
+            if travel_time > 10:
+                score -= travel_time
+
+        return score
+
     def get_score(self, exclusion_days: set[str], start_end_times: tuple[int, int]) -> int | float:
         """
         Calculate the timetable score from the given sessions.
@@ -68,19 +80,17 @@ class Timetable:
         for session in sessions:
             for other_session in sessions_copy:
                 # if they are adjacent, then check the amount of time it takes to walk from one location to another
-                if session.adjacent(other_session) and session != other_session and session.location != "NA" \
-                        and other_session.location != "NA":
-                    travel_time = get_travel_time(session.location, other_session.location)
-                    if travel_time > 10:
-                        score -= travel_time
+                if session.adjacent(other_session) and session != other_session:
+                    score = self.helper_get_score_travel(session, other_session, score)
 
             if session.day in exclusion_days:
                 score -= 10
-
+            # Deduct points on how early in the day it starts compared to the prefered time
             if session.start_time.hours < prefered_start_time:
-                score -= 10
+                score -= (prefered_start_time - session.start_time.hours) * 5
+            # Deduct points on how late it ends compared to the prefered end time
             if session.end_time.hours > prefered_end_time:
-                score -= 10
+                score -= (session.end_time.hours - prefered_end_time) * 5
 
             # To prevent 2 way score checking (we don't want to check distances between the same locations twice,
             # that would be a waste of both computing power and time from Google api)
@@ -147,11 +157,11 @@ class Timetable:
             if 'Monday' not in result[i]:
                 for j in range(0, 5):  # every sublist must have max 5 things, j is index_2 in helper_func
                     for lect_code in self.table:
-                        self.helper_func(result, i, j, index_time_check, lect_code)
+                        self.helper_func(result, (i, j), index_time_check, lect_code)
 
         return index_time_check, result
 
-    def helper_func(self, to_mutate: list, index1: int, index2: int, check: list, lect_code: str) -> None:
+    def helper_func(self, to_mutate: list, indexes: tuple[int, int], check: list, lect_code: str) -> None:
         """
         This helper function has the responsibility of breaking our code into sizeable chunks in order to get a result
         that will be used in the final output.
@@ -166,7 +176,7 @@ class Timetable:
         2. session.day corresponds to index2 in the sense that the days of the week all become numbers to check with
         index2. If they are the same, then we are at the right spot to add in time-table information.
         """
-
+        index1, index2 = indexes
         index_dict = {'MO': 0, 'TU': 1, 'WE': 2, 'TH': 3, 'FR': 4}  # if sesion.day corresponds checker
 
         for session in self.table[lect_code]:
@@ -193,3 +203,20 @@ class Timetable:
 
         fig.update_layout(width=2500, height=2500)
         fig.show()
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=True)
+
+    # When you are ready to check your work with python_ta, uncomment the following lines.
+    # (In PyCharm, select the lines below and press Ctrl/Cmd + / to toggle comments.)
+    # You can use "Run file in Python Console" to run PythonTA,
+    # and then also test your methods manually in the console.
+    import python_ta
+
+    python_ta.check_all(config={
+        'extra-imports': ['lecture', 'session', 'google_maps_location', 'plotly.graph_objs'],
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })

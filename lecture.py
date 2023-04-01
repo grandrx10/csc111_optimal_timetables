@@ -58,6 +58,10 @@ if __name__ == '__main__':
     # You can use "Run file in Python Console" to run PythonTA,
     # and then also test your methods manually in the console.
     import python_ta
+
+    # NOTE: Python TA will mark an error because time_h isn't used, but it is required for doctest purposes.
     python_ta.check_all(config={
+        'extra-imports': ['session', 'time_h'],  # the names (strs) of imported modules
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })
