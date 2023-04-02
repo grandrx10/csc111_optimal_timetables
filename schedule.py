@@ -84,7 +84,6 @@ class Schedule:
         for i in range(len(paths) - 1, 0, -1):
             if len(paths[i]) < courses_count:
                 paths.pop(i)
-
         return paths
 
     def _helper_get_paths(self, depth_to_reach: int, curr_depth: int) -> list[list[str]]:

@@ -64,8 +64,9 @@ class Timetable:
             if travel_time > 10:
                 score -= travel_time
             else:
-                score += 10  # reward the timetable for having back to back classes and good travel time
-
+                score += 20  # reward the timetable for having back to back classes and good travel time
+        else:
+            score += 10
         return score
 
     def get_score(self, exclusion_days: set[str], start_end_times: tuple[int, int]) -> int | float:
