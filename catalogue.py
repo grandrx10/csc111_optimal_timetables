@@ -57,42 +57,7 @@ class Catalogue:
         for course_name in raw_data:   # traversing each course in the dataset
             if course_name[:6] in self.wanted_courses and (course_name[9] == term or course_name[9] == 'Y'):
                 course_info = raw_data[course_name]['meetings']
-                lectures = []
-                for lecture_name in course_info:   # traversing each lecture/tutorial in the current course
-                    if lecture_name[:3] == 'LEC':   # excluding the "tutorials"
-                        sessions_info = course_info[lecture_name]['schedule']
-                        sessions = []
-                        for session in sessions_info:      # traversing each session in the current lecture
-                            if sessions_info[session]["meetingStartTime"] is not None:
-                                start_time_hour = int(sessions_info[session]["meetingStartTime"][:2])
-                                start_time_min = int(sessions_info[session]["meetingStartTime"][3:])
-                                start_time = Time(start_time_hour, start_time_min)  # initializing the start time
-
-                                end_time_hour = int(sessions_info[session]["meetingEndTime"][:2])
-                                end_time_min = int(sessions_info[session]["meetingEndTime"][3:])
-                                end_time = Time(end_time_hour, end_time_min)    # initializing the end time
-
-                                day = sessions_info[session]["meetingDay"]  # extracting the day info
-                                # TEMP
-                                if sessions_info[session]["assignedRoom1"] is not None:
-                                    location = self.uoft_building_to_address(
-                                        sessions_info[session]["assignedRoom1"][:2])
-                                elif sessions_info[session]["assignedRoom2"] is not None:
-                                    location = self.uoft_building_to_address(
-                                        sessions_info[session]["assignedRoom2"][:2])
-                                else:
-                                    location = "NA"
-
-                                # initializing the Session() class with the relevant info
-                                session = Session((start_time, end_time), day, location)
-                                sessions += [session]   # adding it into the sessions list
-
-                        if sessions:
-                            # getting the right lecture code format for the Lecture() class
-                            lect_code = f'{course_name[:6]} {lecture_name}'
-                            # initializing the Lecture() class with the relevant info
-                            lecture = Lecture(lect_code, sessions)
-                            lectures += [lecture]
+                lectures = self._helper_load_lectures(course_name, course_info)
 
                 if lectures:
                     # initializing the Course() class with the relevant info
@@ -103,6 +68,55 @@ class Catalogue:
         for course_name in self.wanted_courses:
             if course_name not in self.data:
                 raise KeyError(f'{course_name} is not a valid course code or is not offered in {term} term')
+
+    def _helper_load_lectures(self, course_name: str, course_info: dict) -> list[Lecture]:
+        """
+        Given the course name and course info, return a list of complete Lecture classes for that course.
+        """
+        lectures = []
+        for lecture_name in course_info:  # traversing each lecture/tutorial in the current course
+            if lecture_name[:3] == 'LEC':  # excluding the "tutorials"
+                sessions_info = course_info[lecture_name]['schedule']
+                sessions = self._helper_load_sessions(sessions_info)
+
+                if sessions:
+                    # getting the right lecture code format for the Lecture() class
+                    lect_code = f'{course_name[:6]} {lecture_name}'
+                    # initializing the Lecture() class with the relevant info
+                    lecture = Lecture(lect_code, sessions)
+                    lectures.append(lecture)
+        return lectures
+
+    def _helper_load_sessions(self, sessions_info: dict) -> list[Session]:
+        """
+        Return a list of all sessions for that lecture. Use the given sessions_info.
+        """
+        sessions = []
+        for session in sessions_info:  # traversing each session in the current lecture
+            if sessions_info[session]["meetingStartTime"] is not None:
+                start_time_hour = int(sessions_info[session]["meetingStartTime"][:2])
+                start_time_min = int(sessions_info[session]["meetingStartTime"][3:])
+                start_time = Time(start_time_hour, start_time_min)  # initializing the start time
+
+                end_time_hour = int(sessions_info[session]["meetingEndTime"][:2])
+                end_time_min = int(sessions_info[session]["meetingEndTime"][3:])
+                end_time = Time(end_time_hour, end_time_min)  # initializing the end time
+
+                day = sessions_info[session]["meetingDay"]  # extracting the day info
+                # TEMP
+                if sessions_info[session]["assignedRoom1"] is not None:
+                    location = self.uoft_building_to_address(
+                        sessions_info[session]["assignedRoom1"][:2])
+                elif sessions_info[session]["assignedRoom2"] is not None:
+                    location = self.uoft_building_to_address(
+                        sessions_info[session]["assignedRoom2"][:2])
+                else:
+                    location = "NA"
+
+                # initializing the Session() class with the relevant info
+                session = Session((start_time, end_time), day, location)
+                sessions.append(session)  # adding it into the sessions list
+        return sessions
 
     def get_possible_lect_sessions(self, course: str) -> list[Lecture]:
         """
@@ -128,12 +142,11 @@ class Catalogue:
         Read a csv file and update self.building_code.
         Match the building codes of uoft buildings to their actual addresses for google maps to use.
         """
-        with open(csv_file) as csv_file:
-            reader = csv.reader(csv_file)
+        with open(csv_file) as data:
+            reader = csv.reader(data)
 
             for row in reader:
-                for i in range(0, 1):
-                    self.building_codes[str(row[i + 1])] = str(row[i])
+                self.building_codes[str(row[1])] = str(row[0])
 
 
 if __name__ == '__main__':
