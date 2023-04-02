@@ -132,8 +132,9 @@ class Catalogue:
             reader = csv.reader(csv_file)
 
             for row in reader:
-                self.building_codes[str(row[1])] = str(row[0])
-                
+                for i in range(0, 1):
+                    self.building_codes[str(row[i + 1])] = str(row[i])
+
 
 if __name__ == '__main__':
     import doctest
