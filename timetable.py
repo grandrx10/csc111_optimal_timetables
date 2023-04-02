@@ -97,13 +97,13 @@ class Timetable:
                     score = self.helper_get_score_travel(session, other_session, score)
 
             if session.day in exclusion_days:
-                score -= 10
+                score -= 20
             # Deduct points on how early in the day it starts compared to the prefered time
             if session.start_time.hours < prefered_start_time:
-                score -= (prefered_start_time - session.start_time.hours) * 5
+                score -= (prefered_start_time - session.start_time.hours) * 7
             # Deduct points on how late it ends compared to the prefered end time
             if session.end_time.hours > prefered_end_time:
-                score -= (session.end_time.hours - prefered_end_time) * 5
+                score -= (session.end_time.hours - prefered_end_time) * 7
 
             # To prevent 2 way score checking (we don't want to check distances between the same locations twice,
             # that would be a waste of both computing power and time from Google api)
