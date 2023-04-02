@@ -161,6 +161,6 @@ if __name__ == '__main__':
 
     python_ta.check_all(config={
         'extra-imports': ['json', 'course', 'lecture', 'session', 'time_h', 'csv'],
-        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'allowed-io': ['Catalogue.read_csv_building_code', 'Catalogue.__init__'],
         'max-line-length': 120
     })
