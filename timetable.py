@@ -151,8 +151,10 @@ class Timetable:
         """
 
         result = [['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']]
-
-        range_end = len(self.time_columns())
+        
+        index_time_check = self.time_columns()
+        
+        range_end = len(index_time_check)
 
         for _ in range(0, range_end - 1):  # to produce as many columns as the maximum hour intervals
             result.append(["", "", "", "", ""])
