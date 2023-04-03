@@ -19,14 +19,13 @@ def get_travel_time(start_location: str, end_location: str) -> int:
     try:
         direction = gmaps.directions(start_location, end_location, mode="walking",
                                      departure_time=datetime.datetime.now())
-    # Sometimes the google maps cannot detect certain locations, and so we will return a default
-    # value.
-    except googlemaps.exceptions.ApiError:
+        time = direction[0]['legs'][0]['duration']['value']
+
+        return time // 60
+    # The google maps cannot detect certain locations, and so we will return a default
+    # value for those locations
+    except googlemaps.exceptions.ApiError and IndexError:
         return 10
-
-    time = direction[0]['legs'][0]['duration']['value']
-
-    return time // 60
 
 
 if __name__ == '__main__':
