@@ -24,7 +24,7 @@ def get_travel_time(start_location: str, end_location: str) -> int:
         return time // 60
     # The google maps cannot detect certain locations, and so we will return a default
     # value for those locations
-    except googlemaps.exceptions.ApiError and IndexError:
+    except (googlemaps.exceptions.ApiError, IndexError):
         return 10
 
 
