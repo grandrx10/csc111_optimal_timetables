@@ -16,7 +16,14 @@ def get_travel_time(start_location: str, end_location: str) -> int:
     """
     Return the time taken to travel between two addresses in minutes
     """
-    direction = gmaps.directions(start_location, end_location, mode="walking", departure_time=datetime.datetime.now())
+    try:
+        direction = gmaps.directions(start_location, end_location, mode="walking",
+                                     departure_time=datetime.datetime.now())
+    # Sometimes the google maps cannot detect certain locations, and so we will return a default
+    # value.
+    except googlemaps.exceptions.ApiError:
+        return 10
+
     time = direction[0]['legs'][0]['duration']['value']
 
     return time // 60
